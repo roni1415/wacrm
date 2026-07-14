@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" width="100%" height="100%">
+  <defs>
+    <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#25D366" />
+      <stop offset="100%" stop-color="#128C7E" />
+    </linearGradient>
+    <filter id="shadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="8" stdDeviation="12" flood-color="#128C7E" flood-opacity="0.3" />
+    </filter>
+  </defs>
+  <!-- Main Chat Bubble -->
+  <path d="M128 24C70.56 24 24 68.56 24 126c0 23.4 8.04 44.96 21.48 62.28L32 232l46.2-12.84C94.44 229.44 110.76 234 128 234c57.44 0 104-44.56 104-102S185.44 24 128 24z" fill="url(#grad)" filter="url(#shadow)" />
+  
+  <!-- Stylized CRM 'W' / Pulse inside -->
+  <path d="M72 116 L 100 152 L 132 108 L 160 144 L 184 112" stroke="#ffffff" stroke-width="20" stroke-linecap="round" stroke-linejoin="round" fill="none" />
+</svg>

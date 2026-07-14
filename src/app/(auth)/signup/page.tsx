@@ -135,7 +135,7 @@ function SignupPageInner() {
             {inviteToken ? (
               <UsersRound className="h-6 w-6 text-primary" />
             ) : (
-              <MessageSquare className="h-6 w-6 text-primary" />
+              <img src="/logo.svg" alt="WACRM Logo" className="h-6 w-6" />
             )}
           </div>
           <CardTitle className="text-xl text-foreground">

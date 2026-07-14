@@ -47,7 +47,7 @@ export default function ForgotPasswordPage() {
         <Card className="w-full max-w-md border-border bg-card">
           <CardHeader className="items-center text-center">
             <div className="mb-2 flex h-12 w-12 items-center justify-center rounded-[var(--radius-large)] bg-primary/10">
-              <Mail className="h-6 w-6 text-primary" />
+              <img src="/logo.svg" alt="WACRM Logo" className="h-6 w-6" />
             </div>
             <CardTitle className="text-xl text-foreground">
               Check your email
@@ -78,7 +78,7 @@ export default function ForgotPasswordPage() {
       <Card className="w-full max-w-md border-border bg-card">
         <CardHeader className="items-center text-center">
           <div className="mb-2 flex h-12 w-12 items-center justify-center rounded-[var(--radius-large)] bg-primary/10">
-            <KeyRound className="h-6 w-6 text-primary" />
+            <img src="/logo.svg" alt="WACRM Logo" className="h-6 w-6" />
           </div>
           <CardTitle className="text-xl text-foreground">Reset password</CardTitle>
           <CardDescription className="text-muted-foreground">

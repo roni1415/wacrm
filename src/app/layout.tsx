@@ -14,6 +14,7 @@ import {
   STORAGE_KEY,
   THEME_IDS,
 } from "@/lib/themes";
+import { LicenseGuard } from "@/components/license-guard";
 
 const inter = Inter({
   variable: "--font-sans",
@@ -22,16 +23,13 @@ const inter = Inter({
 
 export const metadata: Metadata = {
   title: {
-    default: "wacrm",
-    template: "%s — wacrm",
+    default: "WACRM by RONI",
+    template: "%s — WACRM by RONI",
   },
-  description: "Self-hostable CRM template for WhatsApp.",
+  description: "WACRM by RONI - The Ultimate WhatsApp CRM.",
   robots: {
     index: false,
     follow: false,
-  },
-  icons: {
-    icon: [{ url: "/icon" }],
   },
   formatDetection: {
     email: false,
@@ -110,8 +108,10 @@ export default async function RootLayout({
       <body className="min-h-full bg-background text-foreground font-sans">
         <NextIntlClientProvider messages={messages} locale={locale}>
           <ThemeProvider>
-            {children}
-            <ThemedToaster />
+            <LicenseGuard>
+              {children}
+              <ThemedToaster />
+            </LicenseGuard>
           </ThemeProvider>
         </NextIntlClientProvider>
       </body>
