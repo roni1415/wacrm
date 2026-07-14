@@ -62,8 +62,8 @@ export default async function SuperAdminCustomers() {
                 <TableCell>{customer.owner_name}<br/><span className="text-xs text-muted-foreground">{customer.phone}</span></TableCell>
                 <TableCell>
                   <Badge variant={
-                    customer.status === 'active' ? 'success' : 
-                    customer.status === 'suspended' ? 'danger' : 'secondary'
+                    customer.status === 'active' ? 'default' : 
+                    customer.status === 'suspended' ? 'destructive' : 'secondary'
                   }>
                     {customer.status}
                   </Badge>
@@ -75,7 +75,7 @@ export default async function SuperAdminCustomers() {
                 </TableCell>
                 <TableCell>₹{customer.monthly_fee}</TableCell>
                 <TableCell>
-                  <Badge variant={customer.payment_status === 'overdue' ? 'danger' : 'outline'}>
+                  <Badge variant={customer.payment_status === 'overdue' ? 'destructive' : 'outline'}>
                     {customer.payment_status}
                   </Badge>
                 </TableCell>
