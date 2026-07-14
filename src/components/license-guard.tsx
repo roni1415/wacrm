@@ -9,8 +9,8 @@ export function LicenseGuard({ children }: { children: React.ReactNode }) {
   const [isValidating, setIsValidating] = useState(true);
 
   useEffect(() => {
-    // Skip license check for the suspended page itself and super-admin routes
-    if (pathname === "/suspended" || pathname.startsWith("/super-admin")) {
+    // Skip license check ONLY for super-admin routes
+    if (pathname?.startsWith("/super-admin")) {
       setIsValidating(false);
       return;
     }
@@ -25,8 +25,6 @@ export function LicenseGuard({ children }: { children: React.ReactNode }) {
       }
 
       try {
-        // In a real multi-tenant setup, this would ping license.yourdomain.com
-        // Here we ping the local API for simplicity in the monorepo architecture
         const res = await fetch("/api/v1/license/verify", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -39,9 +37,18 @@ export function LicenseGuard({ children }: { children: React.ReactNode }) {
         const data = await res.json();
 
         if (!data.valid) {
-          router.replace("/suspended");
+          if (pathname !== "/suspended") {
+            router.replace("/suspended");
+          } else {
+            setIsValidating(false);
+          }
         } else {
-          setIsValidating(false);
+          // If valid and they are on the suspended page, save them!
+          if (pathname === "/suspended") {
+            router.replace("/dashboard");
+          } else {
+            setIsValidating(false);
+          }
         }
       } catch (error) {
         console.error("Failed to verify license", error);
