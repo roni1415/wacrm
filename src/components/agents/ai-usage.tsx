@@ -19,7 +19,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { Skeleton } from '@/components/dashboard/skeleton';
+import { Skeleton } from "@/components/ui/skeleton";
 import { BarChart } from '@/components/tremor/bar-chart';
 import { formatCompactNumber } from '@/lib/currency';
 import { format, parseISO } from 'date-fns';

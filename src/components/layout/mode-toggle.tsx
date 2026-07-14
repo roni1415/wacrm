@@ -4,6 +4,7 @@ import { Moon, Sun } from "lucide-react";
 
 import { useTheme } from "@/hooks/use-theme";
 import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
 
 import { useTranslations } from "next-intl";
 
@@ -22,21 +23,19 @@ export function ModeToggle({ className }: { className?: string }) {
   const switchLabel = t("switchMode", { mode: goingTo });
   
   return (
-    <button
-      type="button"
+    <Button
+      variant="ghost"
+      size="icon"
       onClick={toggleMode}
       aria-label={switchLabel}
       title={switchLabel}
-      className={cn(
-        "flex h-10 w-10 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-muted hover:text-foreground",
-        className,
-      )}
+      className={className}
     >
       {mode === "dark" ? (
         <Moon className="h-5 w-5" />
       ) : (
         <Sun className="h-5 w-5" />
       )}
-    </button>
+    </Button>
   );
 }

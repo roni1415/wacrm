@@ -12,7 +12,7 @@ import type { Conversation, ConversationStatus, Tag } from "@/types";
 import { Search, ChevronDown, X } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import { useTranslations } from "next-intl";
-import { Input } from "@/components/ui/input";
+import { SearchInput } from "@/components/ui/search-input";
 import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
@@ -226,15 +226,12 @@ export function ConversationList({
     <div className="flex h-full w-full flex-col border-r border-border bg-card lg:w-80">
       {/* Search + Filter */}
       <div className="space-y-2 border-b border-border p-3">
-        <div className="relative">
-          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-          <Input
+          <SearchInput
             value={search}
             onChange={handleSearchChange}
             placeholder={t("searchPlaceholder")}
-            className="border-border bg-muted pl-9 text-sm text-foreground placeholder-muted-foreground focus:border-primary/50"
+            className="w-full"
           />
-        </div>
 
         <div className="flex flex-wrap items-center gap-1">
           <DropdownMenu>
@@ -406,7 +403,7 @@ export function ConversationList({
             <p className="text-sm text-muted-foreground">{t("noConversations")}</p>
           </div>
         ) : (
-          <div className="flex flex-col">
+          <div className="flex flex-col py-2">
             {filtered.map((conv) => (
               <ConversationItem
                 key={conv.id}
@@ -454,8 +451,8 @@ function ConversationItem({
     <button
       onClick={handleClick}
       className={cn(
-        "flex w-full items-start gap-3 px-3 py-3 text-left transition-colors hover:bg-muted/50",
-        isActive && "border-l-2 border-primary bg-muted/70"
+        "mx-2 my-0.5 flex items-start gap-3 rounded-[var(--radius-medium)] px-3 py-2.5 text-left transition-colors hover:bg-muted/50 outline-none focus-visible:shadow-focus",
+        isActive && "bg-muted shadow-[var(--shadow-small)]"
       )}
     >
       {/* Avatar */}

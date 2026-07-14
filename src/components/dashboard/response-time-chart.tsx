@@ -5,7 +5,8 @@ import { DOW_SHORT_MON_FIRST } from '@/lib/dashboard/date-utils'
 import type { ResponseTimeSummary } from '@/lib/dashboard/types'
 import { BarChart } from '@/components/tremor/bar-chart'
 import { EmptyState } from './empty-state'
-import { Skeleton } from './skeleton'
+import { Skeleton } from '@/components/ui/skeleton'
+import { Card } from '@/components/ui/card'
 
 interface ResponseTimeChartProps {
   data: ResponseTimeSummary | null
@@ -47,7 +48,7 @@ export function ResponseTimeChart({
     })) ?? []
 
   return (
-    <section className="rounded-xl border border-border bg-card">
+    <Card className="gap-0 p-0">
       <header className="flex items-center justify-between gap-3 border-b border-border px-5 py-4">
         <div>
           <h2 className="text-sm font-semibold text-foreground">
@@ -106,7 +107,7 @@ export function ResponseTimeChart({
           />
         )}
       </div>
-    </section>
+    </Card>
   )
 }
 

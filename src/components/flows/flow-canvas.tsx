@@ -707,33 +707,40 @@ const ADD_NODE_TYPES: NodeType[] = [
 function CanvasAddNodeButton({ t }: { t: ReturnType<typeof useTranslations> }) {
   const reactFlow = useReactFlow();
   const { addNode, updateNodePosition } = useFlowEditor();
+  const [open, setOpen] = useState(false);
 
   const handleAdd = (type: NodeType) => {
-    const key = addNode(type);
-    // Place the new node at the visible canvas center. The Panel's
-    // own DOM lives inside ReactFlow so we can climb up to find the
-    // .react-flow root and read its bounding rect. If we can't find
-    // it (test envs, etc.), addNode's default (0, 0) is the fallback
-    // and the user can drag the node into view.
-    const root = document.querySelector('.react-flow') as HTMLElement | null;
-    if (!root) return;
-    const rect = root.getBoundingClientRect();
-    const center = reactFlow.screenToFlowPosition({
-      x: rect.left + rect.width / 2,
-      y: rect.top + rect.height / 2,
-    });
-    // NODE_WIDTH / NODE_HEIGHT are the dagre layout defaults; offset
-    // so the card sits visually centered rather than top-left at the
-    // viewport center.
-    updateNodePosition(
-      key,
-      center.x - NODE_WIDTH / 2,
-      center.y - NODE_HEIGHT / 2
-    );
+    try {
+      setOpen(false);
+      const key = addNode(type);
+      // Place the new node at the visible canvas center. The Panel's
+      // own DOM lives inside ReactFlow so we can climb up to find the
+      // .react-flow root and read its bounding rect. If we can't find
+      // it (test envs, etc.), addNode's default (0, 0) is the fallback
+      // and the user can drag the node into view.
+      const root = document.querySelector('.react-flow') as HTMLElement | null;
+      if (!root) return;
+      const rect = root.getBoundingClientRect();
+      const center = reactFlow.screenToFlowPosition({
+        x: rect.left + rect.width / 2,
+        y: rect.top + rect.height / 2,
+      });
+      // NODE_WIDTH / NODE_HEIGHT are the dagre layout defaults; offset
+      // so the card sits visually centered rather than top-left at the
+      // viewport center.
+      updateNodePosition(
+        key,
+        center.x - NODE_WIDTH / 2,
+        center.y - NODE_HEIGHT / 2
+      );
+    } catch (err: any) {
+      alert("Error in handleAdd: " + String(err) + "\n" + err.stack);
+      console.error(err);
+    }
   };
 
   return (
-    <DropdownMenu>
+    <DropdownMenu open={open} onOpenChange={setOpen}>
       <DropdownMenuTrigger
         className="bg-primary text-primary-foreground hover:bg-primary-hover inline-flex items-center gap-1.5 rounded-lg px-3.5 py-2 text-[13px] font-medium shadow-[0_6px_20px_-8px_rgba(0,0,0,0.5)] transition-colors"
         aria-label={t('addNode')}

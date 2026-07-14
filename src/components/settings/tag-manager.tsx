@@ -224,7 +224,7 @@ export function TagManager() {
                     aria-label={t('useColor', { color: t(`colors.${color.name}` as Parameters<typeof t>[0]) })}
                     aria-pressed={selectedColor === color.value}
                     className={cn(
-                      'size-6 rounded-md transition-transform hover:scale-110',
+                      'size-6 rounded-[var(--radius-medium)] transition-transform hover:scale-110',
                       selectedColor === color.value &&
                         'outline outline-2 outline-offset-2 outline-primary',
                     )}

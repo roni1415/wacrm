@@ -1,6 +1,7 @@
 import { ArrowDown, ArrowUp, Minus } from 'lucide-react'
 import type { ComponentType } from 'react'
 import { cn } from '@/lib/utils'
+import { Card } from '@/components/ui/card'
 
 interface MetricCardProps {
   title: string
@@ -23,20 +24,22 @@ interface MetricCardProps {
 
 export function MetricCard({ title, value, icon: Icon, delta, subtitle }: MetricCardProps) {
   return (
-    <div className="rounded-xl border border-border bg-card p-5">
-      <div className="flex items-start justify-between">
+    <Card className="gap-0 py-5">
+      <div className="flex items-start justify-between px-5">
         <p className="text-sm font-medium text-muted-foreground">{title}</p>
-        <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-muted text-muted-foreground">
-          <Icon className="h-4 w-4" />
+        <div className="flex h-10 w-10 items-center justify-center rounded-[var(--radius-medium)] bg-primary/10 text-primary">
+          <Icon className="h-5 w-5" />
         </div>
       </div>
-      <p className="mt-3 text-[28px] leading-none font-bold tabular-nums text-foreground">
-        {value}
-      </p>
-      {delta ? <DeltaRow sign={delta.sign} label={delta.label} /> : subtitle ? (
-        <p className="mt-2 text-sm text-muted-foreground">{subtitle}</p>
-      ) : null}
-    </div>
+      <div className="px-5">
+        <p className="mt-4 text-3xl font-bold tracking-tight text-foreground tabular-nums leading-none">
+          {value}
+        </p>
+        {delta ? <DeltaRow sign={delta.sign} label={delta.label} /> : subtitle ? (
+          <p className="mt-2 text-sm text-muted-foreground">{subtitle}</p>
+        ) : null}
+      </div>
+    </Card>
   )
 }
 
@@ -45,7 +48,7 @@ function DeltaRow({ sign, label }: { sign: number; label: string }) {
     sign > 0
       ? 'text-primary'
       : sign < 0
-      ? 'text-red-400'
+      ? 'text-danger'
       : 'text-muted-foreground'
   const Arrow = sign > 0 ? ArrowUp : sign < 0 ? ArrowDown : Minus
   return (

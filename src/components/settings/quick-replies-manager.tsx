@@ -141,7 +141,7 @@ export function QuickRepliesManager() {
           <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
         </div>
       ) : items.length === 0 ? (
-        <p className="rounded-lg border border-dashed border-border py-10 text-center text-sm text-muted-foreground">
+        <p className="rounded-[var(--radius-large)] border border-dashed border-border py-10 text-center text-sm text-muted-foreground">
           No quick replies yet. Create one to reuse it across conversations.
         </p>
       ) : (
@@ -149,7 +149,7 @@ export function QuickRepliesManager() {
           {items.map((qr) => (
             <li
               key={qr.id}
-              className="flex items-start gap-3 rounded-lg border border-border bg-card p-3"
+              className="flex items-start gap-3 rounded-[var(--radius-large)] border border-border bg-card p-3"
             >
               {qr.kind === "interactive" ? (
                 <Zap className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
@@ -255,8 +255,8 @@ function KindTab({
       onClick={onClick}
       className={
         active
-          ? "flex-1 rounded-md border border-primary bg-primary/10 px-3 py-1.5 text-sm font-medium text-primary"
-          : "flex-1 rounded-md border border-border bg-muted px-3 py-1.5 text-sm font-medium text-muted-foreground hover:text-foreground"
+          ? "flex-1 rounded-[var(--radius-medium)] border border-primary bg-primary/10 px-3 py-1.5 text-sm font-medium text-primary"
+          : "flex-1 rounded-[var(--radius-medium)] border border-border bg-muted px-3 py-1.5 text-sm font-medium text-muted-foreground hover:text-foreground"
       }
     >
       {label}

@@ -5,8 +5,29 @@
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
+  --spacing-1: 0.25rem;
+  --spacing-2: 0.5rem;
+  --spacing-3: 0.75rem;
+  --spacing-4: 1rem;
+  --spacing-5: 1.25rem;
+  --spacing-6: 1.5rem;
+  --spacing-8: 2rem;
+  --spacing-10: 2.5rem;
+  --spacing-12: 3rem;
+  --spacing-16: 4rem;
+
   --color-background: var(--background);
+  --color-surface: var(--surface);
   --color-foreground: var(--foreground);
+  --color-text-primary: var(--foreground);
+  --color-text-secondary: var(--muted-foreground);
+  --color-text-disabled: var(--disabled);
+  
+  --color-success: var(--success);
+  --color-warning: var(--warning);
+  --color-info: var(--info);
+  --color-danger: var(--danger);
+
   --font-sans: var(--font-sans);
   --font-mono: var(--font-geist-mono);
   --font-heading: var(--font-sans);
@@ -26,7 +47,7 @@
   --color-ring: var(--ring);
   --color-input: var(--input);
   --color-border: var(--border);
-  --color-destructive: var(--destructive);
+  --color-destructive: var(--danger);
   --color-accent-foreground: var(--accent-foreground);
   --color-accent: var(--accent);
   --color-muted-foreground: var(--muted-foreground);
@@ -39,15 +60,16 @@
   --color-popover: var(--popover);
   --color-card-foreground: var(--card-foreground);
   --color-card: var(--card);
-  /* Secondary card surface (tile / hover backgrounds) and the accent
-   * extras the Settings redesign leans on. The raw --primary-* vars
-   * already exist per-accent below; these mappings expose them (and
-   * --card-2) as Tailwind utilities: bg-card-2, bg-primary-soft,
-   * bg-primary-soft-2, hover:bg-primary-hover. */
   --color-card-2: var(--card-2);
   --color-primary-hover: var(--primary-hover);
   --color-primary-soft: var(--primary-soft);
   --color-primary-soft-2: var(--primary-soft-2);
+
+  --radius-small: 0.25rem;
+  --radius-medium: 0.5rem;
+  --radius-large: 1rem;
+  --radius-full: 9999px;
+  /* Legacy tokens for backward compatibility */
   --radius-sm: calc(var(--radius) * 0.6);
   --radius-md: calc(var(--radius) * 0.8);
   --radius-lg: var(--radius);
@@ -55,6 +77,11 @@
   --radius-2xl: calc(var(--radius) * 1.8);
   --radius-3xl: calc(var(--radius) * 2.2);
   --radius-4xl: calc(var(--radius) * 2.6);
+
+  --shadow-small: var(--shadow-small);
+  --shadow-medium: var(--shadow-medium);
+  --shadow-large: var(--shadow-large);
+  --shadow-focus: var(--shadow-focus);
 }
 
 /* ============================================================
@@ -90,6 +117,19 @@
 html[data-mode="dark"] {
   --background: oklch(0.13 0.01 260);
   --foreground: oklch(0.985 0 0);
+  --surface: oklch(0.18 0.01 260);
+  --disabled: oklch(0.4 0.01 260);
+  
+  --success: oklch(0.65 0.15 150);
+  --warning: oklch(0.75 0.15 80);
+  --info: oklch(0.6 0.15 250);
+  --danger: oklch(0.577 0.245 27.325);
+
+  --shadow-small: 0 1px 2px 0 rgba(0,0,0, 0.4);
+  --shadow-medium: 0 4px 6px -1px rgba(0,0,0, 0.4), 0 2px 4px -2px rgba(0,0,0, 0.4);
+  --shadow-large: 0 10px 15px -3px rgba(0,0,0, 0.4), 0 4px 6px -4px rgba(0,0,0, 0.4);
+  --shadow-focus: 0 0 0 2px oklch(0.13 0.01 260), 0 0 0 4px var(--primary);
+  
   --card: oklch(0.18 0.01 260);
   --card-2: oklch(0.205 0.01 260);
   --card-foreground: oklch(0.985 0 0);
@@ -101,7 +141,7 @@ html[data-mode="dark"] {
   --muted-foreground: oklch(0.65 0.01 260);
   --accent: oklch(0.22 0.01 260);
   --accent-foreground: oklch(0.985 0 0);
-  --destructive: oklch(0.577 0.245 27.325);
+  --destructive: var(--danger);
   --border: oklch(0.28 0.01 260);
   --input: oklch(0.28 0.01 260);
   --chart-2: oklch(0.556 0 0);
@@ -119,6 +159,19 @@ html[data-mode="dark"] {
 html[data-mode="light"] {
   --background: oklch(0.99 0.002 260);
   --foreground: oklch(0.21 0.01 260);
+  --surface: oklch(1 0 0);
+  --disabled: oklch(0.7 0.01 260);
+
+  --success: oklch(0.6 0.15 150);
+  --warning: oklch(0.7 0.15 80);
+  --info: oklch(0.55 0.15 250);
+  --danger: oklch(0.577 0.245 27.325);
+
+  --shadow-small: 0 1px 2px 0 rgba(0,0,0, 0.05);
+  --shadow-medium: 0 4px 6px -1px rgba(0,0,0, 0.1), 0 2px 4px -2px rgba(0,0,0, 0.1);
+  --shadow-large: 0 10px 15px -3px rgba(0,0,0, 0.1), 0 4px 6px -4px rgba(0,0,0, 0.1);
+  --shadow-focus: 0 0 0 2px oklch(0.99 0.002 260), 0 0 0 4px var(--primary);
+
   --card: oklch(1 0 0);
   --card-2: oklch(0.985 0.002 260);
   --card-foreground: oklch(0.21 0.01 260);
@@ -130,7 +183,7 @@ html[data-mode="light"] {
   --muted-foreground: oklch(0.52 0.015 260);
   --accent: oklch(0.96 0.004 260);
   --accent-foreground: oklch(0.25 0.01 260);
-  --destructive: oklch(0.577 0.245 27.325);
+  --destructive: var(--danger);
   --border: oklch(0.922 0.004 260);
   --input: oklch(0.922 0.004 260);
   --chart-2: oklch(0.6 0.1 260);
@@ -226,5 +279,32 @@ html[data-theme="rose"] {
   }
   html {
     @apply font-sans;
+  }
+}
+
+@layer utilities {
+  .text-h1 {
+    @apply text-4xl font-extrabold tracking-tight;
+  }
+  .text-h2 {
+    @apply text-3xl font-semibold tracking-tight;
+  }
+  .text-h3 {
+    @apply text-2xl font-semibold tracking-tight;
+  }
+  .text-h4 {
+    @apply text-xl font-semibold tracking-tight;
+  }
+  .text-body {
+    @apply text-base font-normal;
+  }
+  .text-small {
+    @apply text-sm font-normal;
+  }
+  .text-caption {
+    @apply text-xs font-medium text-muted-foreground;
+  }
+  .text-label {
+    @apply text-sm font-medium leading-none;
   }
 }

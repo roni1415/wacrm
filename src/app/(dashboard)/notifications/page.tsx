@@ -186,8 +186,8 @@ export default function NotificationsPage() {
       </div>
 
       {notifications.length === 0 ? (
-        <div className="flex h-48 flex-col items-center justify-center rounded-xl border border-dashed border-border bg-muted/40">
-          <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10">
+        <div className="flex h-48 flex-col items-center justify-center rounded-[var(--radius-large)] border border-dashed border-border bg-muted/40">
+          <div className="flex h-12 w-12 items-center justify-center rounded-[var(--radius-large)] bg-primary/10">
             <Bell className="h-6 w-6 text-primary" />
           </div>
           <p className="mt-3 text-sm font-medium text-foreground">
@@ -209,7 +209,7 @@ export default function NotificationsPage() {
                   type="button"
                   onClick={() => handleClick(n)}
                   className={cn(
-                    "flex w-full items-start gap-3 rounded-xl border p-4 text-left transition-colors",
+                    "flex w-full items-start gap-3 rounded-[var(--radius-large)] border p-4 text-left transition-colors",
                     isUnread
                       ? "border-primary/30 bg-primary/5 hover:border-primary/50"
                       : "border-border bg-card hover:border-border/70",
@@ -217,7 +217,7 @@ export default function NotificationsPage() {
                 >
                   <div
                     className={cn(
-                      "flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-lg",
+                      "flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-[var(--radius-medium)]",
                       isUnread ? "bg-primary/15" : "bg-muted",
                     )}
                     aria-hidden

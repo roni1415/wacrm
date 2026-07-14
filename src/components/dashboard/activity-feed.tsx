@@ -14,7 +14,8 @@ import type { ComponentType } from 'react'
 import type { ActivityItem, ActivityKind } from '@/lib/dashboard/types'
 import { cn } from '@/lib/utils'
 import { EmptyState } from './empty-state'
-import { Skeleton } from './skeleton'
+import { Skeleton } from '@/components/ui/skeleton'
+import { Card } from '@/components/ui/card'
 
 interface ActivityFeedProps {
   items: ActivityItem[] | null
@@ -57,7 +58,7 @@ export function ActivityFeed({ items, loading }: ActivityFeedProps) {
     i === 0 || totalLoaded > PAGE_SIZES[i - 1]
 
   return (
-    <section className="rounded-xl border border-border bg-card">
+    <Card className="gap-0 p-0">
       <header className="flex items-center justify-between border-b border-border px-5 py-4">
         <h2 className="text-sm font-semibold text-foreground">{t('title')}</h2>
         <Link
@@ -153,7 +154,7 @@ export function ActivityFeed({ items, loading }: ActivityFeedProps) {
           </footer>
         </>
       )}
-    </section>
+    </Card>
   )
 }
 

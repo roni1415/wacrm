@@ -1154,7 +1154,7 @@ function StepRenderer({
                   onClick={() => props.deleteStepAt(path)}
                 >
                   <Trash2 className="h-3.5 w-3.5" />
-                  {t("delete", { defaultValue: "Delete" })}
+                  {t("deleteNode")}
                 </Button>
               </div>
             </div>
@@ -1299,6 +1299,7 @@ function StepEditor({
       return (
         <InteractiveBuilder
           value={asInteractive(cfg)}
+          layout="column"
           onChange={(payload) =>
             onChange({ ...step, step_config: toStepConfig(payload) })
           }

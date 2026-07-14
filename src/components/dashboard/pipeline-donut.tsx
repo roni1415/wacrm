@@ -4,7 +4,8 @@ import { GitBranch } from 'lucide-react'
 import type { PipelineDonutData } from '@/lib/dashboard/types'
 import { formatCurrencyShort } from '@/lib/currency'
 import { EmptyState } from './empty-state'
-import { Skeleton } from './skeleton'
+import { Skeleton } from '@/components/ui/skeleton'
+import { Card } from '@/components/ui/card'
 
 interface PipelineDonutProps {
   data: PipelineDonutData | null
@@ -18,7 +19,7 @@ import { useTranslations } from 'next-intl'
 export function PipelineDonut({ data, loading, currency }: PipelineDonutProps) {
   const t = useTranslations('Dashboard.pipelineDonut')
   return (
-    <section className="flex h-full flex-col rounded-xl border border-border bg-card">
+    <Card className="flex h-full flex-col gap-0 p-0">
       <header className="border-b border-border px-5 py-4">
         <h2 className="text-sm font-semibold text-foreground">{t('title')}</h2>
         <p className="mt-0.5 text-xs text-muted-foreground">
@@ -59,7 +60,7 @@ export function PipelineDonut({ data, loading, currency }: PipelineDonutProps) {
           </>
         )}
       </div>
-    </section>
+    </Card>
   )
 }
 

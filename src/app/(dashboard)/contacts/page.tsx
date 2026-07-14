@@ -56,6 +56,7 @@ import { ImportModal } from '@/components/contacts/import-modal';
 import { CustomFieldsManager } from '@/components/contacts/custom-fields-manager';
 import { useCan } from '@/hooks/use-can';
 import { GatedButton } from '@/components/ui/gated-button';
+import { SearchInput } from '@/components/ui/search-input';
 import { useTranslations } from 'next-intl';
 
 const PAGE_SIZE = 25;
@@ -385,20 +386,16 @@ export default function ContactsPage() {
       {/* Search + tag filter */}
       <div className="space-y-2">
         <div className="flex flex-col sm:flex-row gap-2">
-          <div className="relative w-full max-w-sm">
-            <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
-            <Input
-              value={search}
-              onChange={(e) => {
-                setSearch(e.target.value);
-                // Reset pagination when the query changes — the result
-                // set shrinks/grows, page N may no longer be valid.
-                setPage(0);
-              }}
-              placeholder={t('searchPlaceholder')}
-              className="pl-8 bg-card border-border text-foreground placeholder:text-muted-foreground"
-            />
-          </div>
+          <SearchInput
+            value={search}
+            onChange={(e) => {
+              setSearch(e.target.value);
+              // Reset pagination when the query changes
+              setPage(0);
+            }}
+            placeholder={t('searchPlaceholder')}
+            className="w-full max-w-sm"
+          />
 
           <Popover>
             <PopoverTrigger
@@ -500,7 +497,7 @@ export default function ContactsPage() {
 
       {/* Bulk action bar */}
       {selected.size > 0 && (
-        <div className="flex items-center justify-between gap-4 rounded-lg border border-border bg-muted/40 px-4 py-2">
+        <div className="flex items-center justify-between gap-4 rounded-[var(--radius-large)] border border-border bg-muted/40 px-4 py-2">
           <p className="text-sm text-foreground">
             {t('selectedCount', { count: selected.size })}
           </p>
@@ -528,7 +525,7 @@ export default function ContactsPage() {
       )}
 
       {/* Table */}
-      <div className="rounded-lg border border-border overflow-hidden">
+      <div className="rounded-[var(--radius-large)] border border-border overflow-hidden">
         <Table>
           <TableHeader>
             <TableRow className="border-border hover:bg-transparent">

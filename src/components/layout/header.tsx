@@ -3,7 +3,8 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useAuth } from "@/hooks/use-auth";
-import { LogOut, Menu, Settings as SettingsIcon, User } from "lucide-react";
+import { useUnreadNotifications } from "@/hooks/use-unread-notifications";
+import { Bell, LogOut, Menu, Settings as SettingsIcon, User } from "lucide-react";
 import {
   Avatar,
   AvatarFallback,
@@ -17,6 +18,9 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { ModeToggle } from "@/components/layout/mode-toggle";
+import { Button } from "@/components/ui/button";
+import { SearchInput } from "@/components/ui/search-input";
+import { ShellBreadcrumbs } from "@/components/layout/shell-breadcrumbs";
 
 const pageTitles: Record<string, string> = {
   "/dashboard": "dashboard",
@@ -49,6 +53,7 @@ export function Header({ onOpenSidebar }: HeaderProps) {
   const t = useTranslations("Header");
   const pathname = usePathname();
   const { profile, signOut } = useAuth();
+  const unreadNotifications = useUnreadNotifications();
   const titleKey = getPageTitleKey(pathname);
 
   const initial =
@@ -57,28 +62,42 @@ export function Header({ onOpenSidebar }: HeaderProps) {
     "U";
 
   return (
-    <header className="flex h-14 shrink-0 items-center justify-between gap-3 border-b border-border bg-background px-4 lg:px-6">
+    <header className="sticky top-0 z-30 flex h-14 shrink-0 items-center justify-between gap-3 border-b border-border bg-background/80 px-4 backdrop-blur-md lg:px-6">
       <div className="flex min-w-0 items-center gap-2">
         {/* Hamburger — mobile only. 44×44 hit target per Apple HIG. */}
-        <button
-          type="button"
+        <Button
+          variant="ghost"
+          size="icon"
           onClick={onOpenSidebar}
           aria-label={t("openMenu")}
-          className="flex h-10 w-10 items-center justify-center rounded-md text-muted-foreground transition-colors hover:bg-muted hover:text-foreground lg:hidden"
+          className="lg:hidden"
         >
           <Menu className="h-5 w-5" />
-        </button>
-        <h1 className="truncate text-base font-semibold text-foreground sm:text-lg">
+        </Button>
+        <ShellBreadcrumbs />
+        <h1 className="block truncate text-base font-semibold text-foreground sm:hidden">
           {t(titleKey as string)}
         </h1>
       </div>
 
+      <div className="flex flex-1 items-center justify-end px-2 lg:px-4">
+        <SearchInput className="hidden w-full max-w-sm transition-all focus-within:max-w-md lg:flex" />
+      </div>
+
       <div className="flex items-center gap-1 sm:gap-2">
+        <Button variant="ghost" size="icon" render={<Link href="/notifications" />} nativeButton={false} className="relative">
+            <Bell className="h-5 w-5 text-muted-foreground transition-colors hover:text-foreground" />
+            {unreadNotifications > 0 && (
+              <span className="absolute right-1.5 top-1.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-primary px-1 text-[9px] font-bold text-primary-foreground">
+                {unreadNotifications > 9 ? "9+" : unreadNotifications}
+              </span>
+            )}
+        </Button>
         <ModeToggle />
 
         <DropdownMenu>
         <DropdownMenuTrigger
-          className="flex items-center gap-2 rounded-md px-1 py-1 transition-colors hover:bg-muted/70 focus:bg-muted/70 focus:outline-none data-popup-open:bg-muted/70 sm:gap-3 sm:pl-1 sm:pr-3"
+          className="flex items-center gap-2 rounded-[var(--radius-medium)] px-1 py-1 transition-colors hover:bg-muted/70 focus:bg-muted/70 focus:outline-none focus-visible:shadow-focus data-popup-open:bg-muted/70 sm:gap-3 sm:pl-1 sm:pr-3"
           aria-label={t("openAccountMenu")}
         >
           <Avatar className="size-8">

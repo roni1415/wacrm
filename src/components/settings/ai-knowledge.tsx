@@ -183,7 +183,7 @@ export function AiKnowledgeCard({
             )}
 
             {docs.length > 0 && (
-              <ul className="divide-y divide-border rounded-md border border-border">
+              <ul className="divide-y divide-border rounded-[var(--radius-medium)] border border-border">
                 {docs.map((doc) => (
                   <li
                     key={doc.id}
@@ -220,7 +220,7 @@ export function AiKnowledgeCard({
             )}
 
             {editing !== null ? (
-              <div className="space-y-3 rounded-md border border-border p-3">
+              <div className="space-y-3 rounded-[var(--radius-medium)] border border-border p-3">
                 <div className="space-y-2">
                   <Label htmlFor="kb-title">{t('editDocTitle')}</Label>
                   <Input

@@ -6,6 +6,7 @@ import { AuthProvider, useAuth } from "@/hooks/use-auth";
 import { Sidebar } from "@/components/layout/sidebar";
 import { Header } from "@/components/layout/header";
 import { PresenceHeartbeat } from "@/components/presence/presence-heartbeat";
+import { Spinner } from "@/components/ui/spinner";
 
 // Auth-gated dashboard shell. Extracted from the layout so the layout
 // itself can stay a server component and export metadata (noindex) —
@@ -30,7 +31,7 @@ function DashboardShellInner({ children }: { children: React.ReactNode }) {
     return (
       <div className="flex h-screen items-center justify-center bg-background">
         <div className="flex flex-col items-center gap-3">
-          <div className="h-8 w-8 animate-spin rounded-full border-2 border-primary border-t-transparent" />
+          <Spinner size="lg" className="text-primary" />
           <p className="text-sm text-muted-foreground">Loading...</p>
         </div>
       </div>
@@ -47,8 +48,13 @@ function DashboardShellInner({ children }: { children: React.ReactNode }) {
       <Sidebar open={sidebarOpen} onClose={closeSidebar} />
       <div className="flex flex-1 flex-col overflow-hidden">
         <Header onOpenSidebar={() => setSidebarOpen(true)} />
-        {/* Thinner horizontal padding on mobile so cards have room to breathe. */}
-        <main className="flex-1 overflow-y-auto p-4 sm:p-6">{children}</main>
+        {/* Thinner horizontal padding on mobile so cards have room to breathe.
+            Standardized responsive padding across sizes. */}
+        <main className="flex flex-1 flex-col overflow-y-auto p-4 sm:p-6 lg:p-8">
+          <div className="page-transition-enter mx-auto flex w-full max-w-7xl flex-1 flex-col">
+            {children}
+          </div>
+        </main>
       </div>
     </div>
   );

@@ -880,8 +880,8 @@ export function MessageThread({
     <div className={cn("flex min-w-0 flex-1 flex-col", DOODLE_BG_CLASSES)}>
       {/* Header — solid card surface sits on top of the doodle so the
           name/avatar/dropdowns stay legible. */}
-      <div className="flex items-center justify-between gap-2 border-b border-border bg-card px-3 py-3 sm:px-4">
-        <div className="flex min-w-0 items-center gap-2 sm:gap-3">
+      <div className="flex flex-wrap items-center justify-between gap-y-2 gap-x-4 border-b border-border bg-card px-3 py-3 sm:px-4">
+        <div className="flex flex-1 min-w-[200px] items-center gap-2 sm:gap-3">
           {/* Back-to-list button — mobile only. Hidden on lg+ where the
               conversation list is always visible next to the thread. */}
           {onBack && (
@@ -897,7 +897,7 @@ export function MessageThread({
           <div className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full bg-muted text-sm font-medium text-foreground">
             {displayName.charAt(0).toUpperCase()}
           </div>
-          <div className="min-w-0">
+          <div className="flex-1 min-w-0">
             <h2 className="truncate text-sm font-semibold text-foreground">{displayName}</h2>
             <p className="truncate text-xs text-muted-foreground">{contact.phone}</p>
           </div>
@@ -906,7 +906,7 @@ export function MessageThread({
           <Badge
             variant="outline"
             className={cn(
-              "ml-1 hidden gap-1 border-border text-[10px] sm:inline-flex sm:ml-2",
+              "ml-1 hidden shrink-0 whitespace-nowrap gap-1 border-border text-[10px] sm:inline-flex sm:ml-2",
               sessionInfo.expired ? "text-red-400" : "text-primary"
             )}
           >
@@ -915,7 +915,7 @@ export function MessageThread({
           </Badge>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex shrink-0 items-center gap-1 sm:gap-2">
           {/* Contact-panel toggle — desktop only. The contact sidebar
               eats a chunk of horizontal width that crowds the thread on
               smaller laptops; this lets agents reclaim it when they just
