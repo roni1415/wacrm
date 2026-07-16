@@ -160,7 +160,7 @@ export function deriveCanvasEdges(nodes: BuilderNode[]): CanvasEdge[] {
  * name. Order follows the order the slots appear in the node's
  * config so visual layout matches the form layout.
  *
- * Terminal nodes (handoff / end) return an empty list — they have
+ * Terminal nodes (handoff / handoff_ai / end) return an empty list — they have
  * no outgoing edges and no source handles.
  */
 export interface OutgoingSlot {
@@ -227,6 +227,7 @@ export function outgoingSlots(node: BuilderNode): OutgoingSlot[] {
     }
 
     case "handoff":
+    case "handoff_ai":
     case "end":
       return [];
   }
@@ -311,6 +312,7 @@ export function applyEdgeConnection(
     }
 
     case "handoff":
+    case "handoff_ai":
     case "end":
       return null;
   }
@@ -405,8 +407,8 @@ function patchedConfigWithoutKey(
     }
 
     case "handoff":
+    case "handoff_ai":
     case "end":
       return null;
   }
 }
-

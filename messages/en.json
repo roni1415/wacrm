@@ -1070,6 +1070,7 @@
         "varKeyHelp": "Interpolate in downstream prompts and handoff notes with",
         "advanceAfterCapture": "After capturing, advance to",
         "internalNote": "Internal note (for the agent picking up)",
+        "aiInstructions": "Instructions for the AI bot (optional context)",
         "endNodeHelp": "Terminal node. When the runner reaches this node the run is marked complete. No config needed.",
         "bodyText": "Body text",
         "footerText": "Footer (optional, 60 chars)",
@@ -1162,6 +1163,10 @@
           "label": "Handoff to agent",
           "blurb": "Hands the conversation to a human"
         },
+        "handoff_ai": {
+          "label": "Handoff to AI bot",
+          "blurb": "Hands the conversation to the AI bot"
+        },
         "end": {
           "label": "End",
           "blurb": "Ends the flow"
@@ -1189,6 +1194,7 @@
       "video": "Video",
       "document": "Document",
       "audio": "Audio",
+      "handoffAiDefault": "AI takes over",
       "hasTag": "has tag {tag}",
       "opContains": "contains",
       "opExists": "exists",

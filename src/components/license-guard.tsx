@@ -34,6 +34,10 @@ export function LicenseGuard({ children }: { children: React.ReactNode }) {
           }),
         });
 
+        if (!res.ok) {
+          throw new Error(`License verification failed with status: ${res.status}`);
+        }
+
         const data = await res.json();
 
         if (!data.valid) {

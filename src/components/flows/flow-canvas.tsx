@@ -57,7 +57,7 @@ import {
   type OnNodeDrag,
 } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
-import { Plus, Trash2 } from 'lucide-react';
+import { Plus, Trash2, Maximize, Minimize } from 'lucide-react';
 
 import { useTranslations } from 'next-intl';
 
@@ -292,6 +292,28 @@ function FlowCanvasInner() {
   // list view's analogue is the per-card expanded set in
   // flow-builder.tsx.
   const [selectedNodeKey, setSelectedNodeKey] = useState<string | null>(null);
+  const [isAddMenuOpen, setIsAddMenuOpen] = useState(false);
+  const [menuKey, setMenuKey] = useState(0);
+
+  const [isFullscreen, setIsFullscreen] = useState(false);
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const onFullscreenChange = () => {
+      setIsFullscreen(!!document.fullscreenElement);
+    };
+    document.addEventListener('fullscreenchange', onFullscreenChange);
+    return () => document.removeEventListener('fullscreenchange', onFullscreenChange);
+  }, []);
+
+  const toggleFullscreen = () => {
+    if (!document.fullscreenElement) {
+      containerRef.current?.requestFullscreen?.();
+    } else {
+      document.exitFullscreen?.();
+    }
+  };
+
   const selectedNode = useMemo(
     () =>
       selectedNodeKey
@@ -514,14 +536,21 @@ function FlowCanvasInner() {
     return (
       <div className="text-muted-foreground flex h-full flex-col items-center justify-center gap-3 text-sm">
         <p>{t('noNodesYet')}</p>
-        <CanvasAddNodeButton t={t} />
+        <CanvasAddNodeButton
+          t={t}
+          open={isAddMenuOpen}
+          onOpenChange={setIsAddMenuOpen}
+          container={containerRef.current}
+          menuKey={menuKey}
+          setMenuKey={setMenuKey}
+        />
       </div>
     );
   }
 
   return (
     <>
-      <div className="h-full w-full overflow-hidden">
+      <div ref={containerRef} className="bg-background h-full w-full overflow-hidden">
         <ReactFlow
           nodes={rfNodes}
           edges={rfEdges}
@@ -532,6 +561,7 @@ function FlowCanvasInner() {
           onNodesChange={handleNodesChange}
           onNodeDragStop={handleNodeDragStop}
           onNodeClick={handleNodeClick}
+          onPaneClick={() => setIsAddMenuOpen(false)}
           onConnect={handleConnect}
           onNodesDelete={handleNodesDelete}
           onEdgesDelete={handleEdgesDelete}
@@ -570,7 +600,25 @@ function FlowCanvasInner() {
             className="!border-border !bg-card !rounded-xl !border !shadow-[0_6px_20px_-8px_rgba(0,0,0,0.5)]"
           />
           <Panel position="top-left" className="!top-4 !left-4">
-            <CanvasAddNodeButton t={t} />
+            <CanvasAddNodeButton 
+              t={t} 
+              open={isAddMenuOpen} 
+              onOpenChange={setIsAddMenuOpen} 
+              container={containerRef.current} 
+              menuKey={menuKey}
+              setMenuKey={setMenuKey}
+            />
+          </Panel>
+          <Panel position="top-right" className="!top-4 !right-4">
+            <button
+              type="button"
+              onClick={toggleFullscreen}
+              className="bg-primary text-primary-foreground hover:bg-primary-hover inline-flex items-center justify-center rounded-lg h-9 w-9 shadow-[0_6px_20px_-8px_rgba(0,0,0,0.5)] transition-colors"
+              aria-label={isFullscreen ? "Exit Fullscreen" : "Full Screen"}
+              title={isFullscreen ? "Exit Fullscreen" : "Full Screen"}
+            >
+              {isFullscreen ? <Minimize className="h-4 w-4" /> : <Maximize className="h-4 w-4" />}
+            </button>
           </Panel>
         </ReactFlow>
       </div>
@@ -701,17 +749,30 @@ const ADD_NODE_TYPES: NodeType[] = [
   'condition',
   'set_tag',
   'handoff',
+  'handoff_ai',
   'end',
 ];
 
-function CanvasAddNodeButton({ t }: { t: ReturnType<typeof useTranslations> }) {
+function CanvasAddNodeButton({ 
+  t, 
+  open, 
+  onOpenChange, 
+  container, 
+  menuKey, 
+  setMenuKey 
+}: { 
+  t: ReturnType<typeof useTranslations>;
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  container: HTMLElement | null;
+  menuKey: number;
+  setMenuKey: (cb: (prev: number) => number) => void;
+}) {
   const reactFlow = useReactFlow();
   const { addNode, updateNodePosition } = useFlowEditor();
-  const [open, setOpen] = useState(false);
 
   const handleAdd = (type: NodeType) => {
     try {
-      setOpen(false);
       const key = addNode(type);
       // Place the new node at the visible canvas center. The Panel's
       // own DOM lives inside ReactFlow so we can climb up to find the
@@ -736,11 +797,13 @@ function CanvasAddNodeButton({ t }: { t: ReturnType<typeof useTranslations> }) {
     } catch (err: any) {
       alert("Error in handleAdd: " + String(err) + "\n" + err.stack);
       console.error(err);
+    } finally {
+      setMenuKey((prev) => prev + 1);
     }
   };
 
   return (
-    <DropdownMenu open={open} onOpenChange={setOpen}>
+    <DropdownMenu key={menuKey} open={open} onOpenChange={onOpenChange}>
       <DropdownMenuTrigger
         className="bg-primary text-primary-foreground hover:bg-primary-hover inline-flex items-center gap-1.5 rounded-lg px-3.5 py-2 text-[13px] font-medium shadow-[0_6px_20px_-8px_rgba(0,0,0,0.5)] transition-colors"
         aria-label={t('addNode')}
@@ -751,6 +814,7 @@ function CanvasAddNodeButton({ t }: { t: ReturnType<typeof useTranslations> }) {
       <DropdownMenuContent
         align="start"
         className="border-border bg-popover w-[268px] p-1.5"
+        container={container}
       >
         {groupNodeTypesByCategory(ADD_NODE_TYPES).map((group, i) => (
           // DropdownMenuGroup (base-ui Menu.Group) is REQUIRED: the
@@ -768,7 +832,7 @@ function CanvasAddNodeButton({ t }: { t: ReturnType<typeof useTranslations> }) {
                 return (
                   <DropdownMenuItem
                     key={t_type}
-                    onClick={() => handleAdd(t_type)}
+                    onClick={() => setTimeout(() => handleAdd(t_type), 0)}
                     className="gap-3 py-2"
                   >
                     <NodeIconChip

@@ -191,3 +191,123 @@ export async function dispatchInboundToAiReply(
     console.error('[ai auto-reply] dispatch failed:', err)
   }
 }
+
+/**
+ * Triggers a proactive AI greeting upon handoff.
+ * This is called by the flow engine when it reaches a handoff_ai node
+ * that has instructions configured.
+ */
+export async function triggerProactiveAiReply(
+  args: DispatchArgs & { instructions: string },
+): Promise<void> {
+  const { accountId, conversationId, contactId, configOwnerUserId, instructions } = args
+
+  try {
+    const db = supabaseAdmin()
+
+    const config = await loadAiConfig(db, accountId)
+    if (!config || !config.autoReplyEnabled) {
+      console.log('[triggerProactiveAiReply] aborted: AI config not found or autoReply disabled')
+      return
+    }
+
+    const { data: conv, error: convErr } = await db
+      .from('conversations')
+      .select('assigned_agent_id, ai_reply_count')
+      .eq('id', conversationId)
+      .maybeSingle()
+    if (convErr || !conv) {
+      console.log('[triggerProactiveAiReply] aborted: conversation not found')
+      return
+    }
+    if (conv.assigned_agent_id) {
+      console.log('[triggerProactiveAiReply] aborted: assigned_agent_id is set', conv.assigned_agent_id)
+      return
+    }
+    if (conv.ai_reply_count >= config.autoReplyMaxPerConversation) {
+      console.log('[triggerProactiveAiReply] aborted: max replies reached')
+      return
+    }
+
+    // Account rate limit check
+    const acctLimit = checkRateLimit(
+      `ai-autoreply:${accountId}`,
+      RATE_LIMITS.aiAutoReplyAccount,
+    )
+    if (!acctLimit.success) {
+      console.warn(
+        `[ai auto-reply] account ${accountId} hit the per-account rate limit — skipping proactive greeting.`,
+      )
+      return
+    }
+
+    const messages = await buildConversationContext(db, conversationId)
+
+    // Append a synthetic system directive as the "latest message" context
+    const syntheticUserPrompt = config.systemPrompt 
+      ? `${config.systemPrompt}\n\n[SYSTEM DIRECTIVE]: The conversation has just been handed off to you. Proactively reach out to the customer. Instructions for this handoff: ${instructions}`
+      : `[SYSTEM DIRECTIVE]: The conversation has just been handed off to you. Proactively reach out to the customer. Instructions for this handoff: ${instructions}`
+
+    // Grounding knowledge is not explicitly needed for the greeting itself, but we can fetch it based on the last actual user message if any.
+    const knowledge = await retrieveKnowledge(
+      db,
+      accountId,
+      config,
+      latestUserMessage(messages),
+    )
+
+    const systemPrompt = buildSystemPrompt({
+      userPrompt: syntheticUserPrompt,
+      mode: 'auto_reply',
+      knowledge,
+    })
+
+    const { text, handoff, usage } = await generateReply({
+      config,
+      systemPrompt,
+      messages, // This provides the context up to the handoff
+    })
+
+    void logAiUsage(db, {
+      accountId,
+      conversationId,
+      mode: 'auto_reply',
+      provider: config.provider,
+      model: config.model,
+      usage,
+    })
+
+    if (handoff || !text) {
+      console.log('[triggerProactiveAiReply] aborted: model generated handoff or empty text', { handoff, text })
+      // The model decided to handoff or failed. We don't change assignment since it was just handed to the AI.
+      return
+    }
+
+    const { data: claimed, error: claimErr } = await db.rpc(
+      'claim_ai_reply_slot',
+      {
+        conversation_id: conversationId,
+        max_replies: config.autoReplyMaxPerConversation,
+      },
+    )
+    if (claimErr) {
+      console.log('[triggerProactiveAiReply] aborted: claimErr', claimErr)
+      return
+    }
+    if (claimed !== true) {
+      console.log('[triggerProactiveAiReply] aborted: could not claim slot')
+      return
+    }
+
+    await engineSendText({
+      accountId,
+      userId: configOwnerUserId,
+      conversationId,
+      contactId,
+      text,
+      aiGenerated: true,
+    })
+  } catch (err) {
+    console.error('[ai auto-reply] proactive trigger failed:', err)
+  }
+}

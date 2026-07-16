@@ -701,6 +701,7 @@ function validateNode(
       break;
     }
 
+    case "handoff_ai":
     case "handoff":
     case "end":
       // Terminal nodes have no outgoing edges; nothing to validate
@@ -785,6 +786,7 @@ function outgoingEdges(node: NodeInput): string[] {
       }
       return out;
     }
+    case "handoff_ai":
     case "handoff":
     case "end":
     default:

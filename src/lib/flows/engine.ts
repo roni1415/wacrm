@@ -40,6 +40,7 @@ import {
   engineSendText,
 } from "./meta-send";
 import { decideFallback, resolveFallbackPolicy } from "./fallback";
+import { triggerProactiveAiReply } from "../ai/auto-reply";
 import {
   type CollectInputNodeConfig,
   type ConditionNodeConfig,
@@ -131,7 +132,7 @@ export function isSuspending(node_type: string): boolean {
 
 /** Nodes that end the run. */
 export function isTerminal(node_type: string): boolean {
-  return node_type === "handoff" || node_type === "end";
+  return node_type === "handoff" || node_type === "handoff_ai" || node_type === "end";
 }
 
 /**
@@ -253,8 +254,9 @@ async function logEvent(
     | "message_sent"
     | "reply_received"
     | "fallback_fired"
+    | "handed_off"
     | "handoff"
-    | "timeout"
+    | "handoff_ai"
     | "error"
     | "completed",
   node_key: string | null,
@@ -452,6 +454,44 @@ async function executeHandoff(
     assigned_to: cfg.assign_to ?? null,
   });
   await endRun(db, run.id, "handed_off", "handoff_node");
+}
+
+async function executeHandoffAi(
+  db: AdminClient,
+  run: FlowRunRow,
+  node: FlowNodeRow,
+): Promise<void> {
+  const cfg = node.config as { instructions?: string };
+  console.log('[executeHandoffAi] Called for node', node.node_key, 'with config', cfg);
+  const convUpdate: Record<string, unknown> = {
+    status: "open", // AI takes over, so it should be open
+    ai_autoreply_disabled: false,
+    updated_at: new Date().toISOString(),
+  };
+  
+  if (run.conversation_id) {
+    await db
+      .from("conversations")
+      .update(convUpdate)
+      .eq("id", run.conversation_id);
+  }
+  
+  await logEvent(db, run.id, "handoff_ai", node.node_key, {
+    instructions: cfg.instructions ?? null,
+  });
+  
+  await endRun(db, run.id, "handed_off", "handoff_node");
+
+  if (cfg.instructions && run.conversation_id && run.contact_id) {
+    // Fire-and-forget the proactive reply (it swallows its own errors)
+    void triggerProactiveAiReply({
+      accountId: run.account_id,
+      conversationId: run.conversation_id,
+      contactId: run.contact_id,
+      configOwnerUserId: run.user_id,
+      instructions: cfg.instructions,
+    });
+  }
 }
 
 /**
@@ -767,6 +807,12 @@ async function advanceFromNodeKey(
       await executeHandoff(db, run, node);
       return { outcome: "handed_off" };
     }
+    
+    if (node.node_type === "handoff_ai") {
+      await executeHandoffAi(db, run, node);
+      return { outcome: "handed_off" };
+    }
+
     if (node.node_type === "end") {
       await logEvent(db, run.id, "completed", node.node_key);
       await endRun(db, run.id, "completed", "end_node");

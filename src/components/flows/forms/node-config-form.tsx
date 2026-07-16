@@ -205,6 +205,16 @@ export function NodeConfigForm({
         />
       );
 
+    case "handoff_ai":
+      return (
+        <TextRow
+          label={t("aiInstructions")}
+          value={(cfg as { instructions?: string }).instructions ?? ""}
+          onChange={(v) => onUpdateConfig({ instructions: v })}
+          rows={3}
+        />
+      );
+
     case "end":
       return (
         <p className="text-xs text-muted-foreground">

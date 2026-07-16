@@ -98,13 +98,18 @@ export interface SendMediaNodeConfig {
 }
 
 export interface HandoffNodeConfig {
-  /** Optional internal note written to flow_run_events.payload.note. */
-  note?: string;
-  /**
-   * Optional agent user_id to assign on the conversation when this
-   * node fires. Leave unset to flip the status without assignment.
-   */
+  /** If present, assigns the thread to this agent ID. */
   assign_to?: string;
+  /** Internal note attached to the handoff event. */
+  note?: string;
+}
+
+export interface HandoffAiNodeConfig {
+  /** 
+   * Optional context or instructions for the AI model to follow
+   * when taking over this conversation.
+   */
+  instructions?: string;
 }
 
 /**
@@ -194,6 +199,7 @@ export type FlowNodeConfig =
   | { node_type: "condition"; config: ConditionNodeConfig }
   | { node_type: "set_tag"; config: SetTagNodeConfig }
   | { node_type: "handoff"; config: HandoffNodeConfig }
+  | { node_type: "handoff_ai"; config: HandoffAiNodeConfig }
   | { node_type: "end"; config: EndNodeConfig };
 
 export type FlowNodeType = FlowNodeConfig["node_type"];

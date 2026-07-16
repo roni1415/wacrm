@@ -28,6 +28,7 @@ import {
   Tag,
   UserPlus,
   Workflow,
+  Bot,
 } from 'lucide-react';
 
 import { cn } from '@/lib/utils';
@@ -50,6 +51,7 @@ export type NodeType =
   | 'condition'
   | 'set_tag'
   | 'handoff'
+  | 'handoff_ai'
   | 'end';
 
 export interface BuilderNode {
@@ -159,6 +161,13 @@ export const NODE_META: Record<
     blurb: 'Hands the conversation to a human',
     category: 'flow',
   },
+  handoff_ai: {
+    label: 'Handoff to AI bot',
+    icon: Bot,
+    color: 'text-emerald-400',
+    blurb: 'Hands the conversation to the AI bot',
+    category: 'flow',
+  },
   end: {
     label: 'End',
     icon: Flag,
@@ -206,6 +215,7 @@ const NODE_HUE: Record<NodeType, { l: number; c: number; h: number }> = {
   condition: { l: 0.72, c: 0.15, h: 65 }, // amber — a fork in the road
   set_tag: { l: 0.65, c: 0.15, h: 350 }, // pink
   handoff: { l: 0.65, c: 0.17, h: 16 }, // rose — hands off
+  handoff_ai: { l: 0.62, c: 0.17, h: 140 }, // green/cyan — AI taking over
   end: { l: 0.55, c: 0.01, h: 260 }, // neutral grey — terminal
 };
 
@@ -309,7 +319,7 @@ export function summarizeNode(
   node: BuilderNode,
   t?: (key: string, values?: Record<string, string | number>) => string
 ): string | null {
-  const cfg = node.config;
+  const cfg = node.config || {};
   switch (node.node_type) {
     case 'start':
     case 'end':
@@ -424,5 +434,11 @@ export function summarizeNode(
       const note = typeof cfg.note === 'string' ? cfg.note : '';
       return note.length > 0 ? truncate(note) : null;
     }
+    case 'handoff_ai': {
+      const instructions = typeof cfg.instructions === 'string' ? cfg.instructions : '';
+      return instructions.length > 0 ? truncate(instructions) : (t ? t('handoffAiDefault') : 'AI takes over');
+    }
+    case 'end':
+      return t ? t('endNode') : 'Ends the flow';
   }
 }
